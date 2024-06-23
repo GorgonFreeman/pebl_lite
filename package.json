@@ -4,8 +4,16 @@
   "description": "NodeJS middleware starter pack",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "(trap 'kill 0' SIGINT; node _node_scripts/runScriptsOnFileSave & nodemon server)",
+    "serve": "(trap 'kill 0' SIGINT; node _node_scripts/runScriptsOnFileSave & PORT=8100 node server)",
+    "allow_commas": "echo 'no problems'"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "string-to-type": "^0.1.1"
+  }
 }

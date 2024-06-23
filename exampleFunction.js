@@ -1,3 +1,5 @@
+const { respond } = require('./utils');
+
 const exampleFunction = async (message) => {
   return { 
     response: `Heard ${ message }`,
