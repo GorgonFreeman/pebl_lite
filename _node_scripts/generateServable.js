@@ -52,3 +52,5 @@ const updateServableFunctions = async (fullFunctionList) => {
   // console.log(servableFunctions);
   await updateServableFunctions(servableFunctions);
 })();
+
+// TO DO: Remove unfindable functions
