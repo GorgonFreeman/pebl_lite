@@ -1,5 +1,6 @@
 const jsYaml = require('js-yaml');
 const readline = require('readline');
+const fs = require('fs').promises;
 
 const respond = (res, status, data, contentType = 'application/json') => {
   return res.writeHead(status, { 'Content-Type': contentType }).end(contentType === 'application/json' ? JSON.stringify(data) : data);
