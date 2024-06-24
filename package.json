@@ -4,6 +4,7 @@
   "description": "NodeJS middleware starter pack",
   "main": "index.js",
   "scripts": {
+    "new": "node _node_scripts/createNewFunction",
     "dev": "(trap 'kill 0' SIGINT; node _node_scripts/runScriptsOnFileSave & nodemon server)",
     "serve": "(trap 'kill 0' SIGINT; node _node_scripts/runScriptsOnFileSave & PORT=8100 node server)",
     "allow_commas": "echo 'no problems'"
