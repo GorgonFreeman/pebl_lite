@@ -1,14 +1,32 @@
-const { respond, shopifyRequestSetup } = require('../utils');
+const { respond, shopifyRequestSetup, customAxios, capitaliseString } = require('../utils');
 
-const shopifyGetSingle = async (keyObj, message) => {
+const shopifyGetSingle = async (keyObj, resource, id, { subKey, attrs = defaultAttrs } = {}) => {
+
+  const Resource = capitaliseString(resource);
 
   const { url, headers } = shopifyRequestSetup(keyObj);
 
-  return { 
-    url, 
-    headers,
-    response: `Heard ${ message }`,
+  const query = `
+    query Get${ Resource } ($id: ID!) {
+      ${ resource }(id: $id) {
+        ${ attrs }
+      }
+    }
+  `;
+
+  const variables = {
+    id: `gid://shopify/${ Resource }/${ id }`,
   };
+
+  const results = await customAxios('post', url, { query, variables }, { headers });
+
+  // TO DO: Return error if resource not there
+  const data = results?.data?.[resource];
+  if (!data) {
+    return { error: results };
+  }
+  
+  return data;
 };
 
 const shopifyGetSingleApi = async (req, res) => {
