@@ -1,6 +1,10 @@
 const { respond, shopifyRequestSetup, customAxios, capitaliseString, stripEdgesAndNodes } = require('../utils');
 
-const shopifyGetSingle = async (keyObj, resource, id, { subKey, attrs = defaultAttrs } = {}) => {
+const defaultAttrs = `
+  id
+`;
+
+const shopifyGetSingle = async (keyObj, resource, id, { attrs = defaultAttrs } = {}) => {
 
   const Resource = capitaliseString(resource);
 
