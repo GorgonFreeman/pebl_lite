@@ -1,4 +1,5 @@
 const servableFunctions = [
+  'shopify/shopifyExample',
   'exampleFunction',
 ];
 
