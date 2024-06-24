@@ -216,6 +216,52 @@ const customAxios = async (method, ...args) => {
   return responseData;
 };
 
+const stripEdgesAndNodes = input => {
+
+  // console.log(input);
+
+  const transformObject = obj => {
+    try {
+      // If object is only edges, return that.
+      const objKeys = Object.keys(obj);
+      if (objKeys.length === 1 && objKeys.every(key => key === 'edges')) {
+        return obj.edges.map(e => e.node);
+      }
+      
+      // Otherwise, preserve other properties, pretty much to rescue pageInfo. 
+      // edge nodes go into 'items'
+      const { edges, ...rest } = obj;
+      return {
+        ...rest,
+        ...{ items: obj.edges.map(e => e.node) },
+      };
+    } catch(err) {
+      // console.log(err);      
+    }
+
+    return obj;
+  };
+
+  if (Array.isArray(input)) {
+
+    // console.log('input is array');
+    return input.map(item => recursivelyTransform(item));
+
+  } else if (isObject(input)) {
+    // console.log('input is object');
+
+    input = transformObject(input);
+
+    for (let [k,v] of Object.entries(input)) {
+      input[k] = recursivelyTransform(v);
+    }
+    return input;
+  }
+
+  // console.log('input is not an array or object');
+  return input;
+};
+
 module.exports = {
   respond,
   intsToRangeArray,
@@ -226,4 +272,5 @@ module.exports = {
   credsByKey,
   shopifyRequestSetup,
   customAxios,
+  stripEdgesAndNodes,
 };

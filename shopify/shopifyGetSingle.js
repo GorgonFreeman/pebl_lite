@@ -1,4 +1,4 @@
-const { respond, shopifyRequestSetup, customAxios, capitaliseString } = require('../utils');
+const { respond, shopifyRequestSetup, customAxios, capitaliseString, stripEdgesAndNodes } = require('../utils');
 
 const shopifyGetSingle = async (keyObj, resource, id, { subKey, attrs = defaultAttrs } = {}) => {
 
@@ -25,8 +25,8 @@ const shopifyGetSingle = async (keyObj, resource, id, { subKey, attrs = defaultA
   if (!data) {
     return { error: results };
   }
-  
-  return data;
+
+  return stripEdgesAndNodes(data);
 };
 
 const shopifyGetSingleApi = async (req, res) => {
