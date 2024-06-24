@@ -1,4 +1,5 @@
 const jsYaml = require('js-yaml');
+const readline = require('readline');
 
 const respond = (res, status, data, contentType = 'application/json') => {
   return res.writeHead(status, { 'Content-Type': contentType }).end(contentType === 'application/json' ? JSON.stringify(data) : data);
@@ -45,9 +46,25 @@ const readFileYaml = async filePath => {
   return jsYaml.load(fileContents);
 };
 
+const askQuestion = query => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise(resolve => rl.question(query, ans => {
+    rl.close();
+    resolve(ans);
+  }));
+};
+
+const capitaliseString = string => `${ string[0].toUpperCase() }${ string.slice(1) }`;
+
 module.exports = {
   respond,
   intsToRangeArray,
   extractCodeBetween,
   readFileYaml,
+  askQuestion,
+  capitaliseString,
 };
