@@ -14,6 +14,32 @@ const intsToRangeArray = (min, max) => {
   ];
 };
 
+const extractCodeBetween = (text, start, end, options) => {
+  const { excludeEnds } = options;
+
+  const textContainsStart = text.includes(start);
+  const textContainsEnd = text.includes(end);
+  if (!(textContainsStart && textContainsEnd)) {
+    return null;
+  }
+
+  let extractedText = text;
+
+  const textSplitByStart = extractedText.split(start);
+  textSplitByStart.shift();
+  extractedText = textSplitByStart.join(start);
+
+  const textSplitByEnd = extractedText.split(end);
+  const partBeforeEnd = textSplitByEnd.shift();
+  extractedText = [
+    excludeEnds ? null : start, 
+    partBeforeEnd, 
+    excludeEnds ? null : end,
+  ].join('');
+
+  return extractedText;
+};
+
 const readFileYaml = async filePath => {
   const fileContents = await fs.readFile(filePath, 'utf8');
   return jsYaml.load(fileContents);
@@ -22,5 +48,6 @@ const readFileYaml = async filePath => {
 module.exports = {
   respond,
   intsToRangeArray,
+  extractCodeBetween,
   readFileYaml,
 };
