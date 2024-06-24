@@ -262,6 +262,18 @@ const stripEdgesAndNodes = input => {
   return input;
 };
 
+// TO DO: Handle response in xApi function and provide all errors, instead of responding here
+const mandateParam = async (res, paramName, paramValue, validator) => {
+  const valid = validator ? await validator(paramValue) : paramValue;
+  if (valid) {
+    return true;
+  }
+
+  console.error(`Param '${ paramName }' not ${ validator ? 'valid' : 'provided' }`);
+  respond(res, 400, { error: `Please provide a ${ validator ? 'valid ' : '' }value for '${ paramName }'` });
+  return false;
+};
+
 module.exports = {
   respond,
   intsToRangeArray,
@@ -273,4 +285,5 @@ module.exports = {
   shopifyRequestSetup,
   customAxios,
   stripEdgesAndNodes,
+  mandateParam,
 };

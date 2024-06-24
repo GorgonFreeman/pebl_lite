@@ -1,4 +1,4 @@
-const { respond, shopifyRequestSetup, customAxios, capitaliseString, stripEdgesAndNodes } = require('../utils');
+const { respond, shopifyRequestSetup, customAxios, capitaliseString, stripEdgesAndNodes, mandateParam } = require('../utils');
 
 const defaultAttrs = `
   id
@@ -35,6 +35,16 @@ const shopifyGetSingle = async (keyObj, resource, id, { attrs = defaultAttrs } =
 
 const shopifyGetSingleApi = async (req, res) => {
   const { keyObj, resource, id, options } = req.body;
+
+  const paramsValid = await Promise.all([
+    mandateParam(res, 'keyObj', keyObj),
+    mandateParam(res, 'resource', resource),
+    mandateParam(res, 'id', id),
+  ]);
+  if (paramsValid.some(valid => valid === false)) {
+    return;
+  }
+
   const result = await shopifyGetSingle(keyObj, resource, id, options);
   respond(res, 200, result);
 };
