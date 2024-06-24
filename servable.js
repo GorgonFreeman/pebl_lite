@@ -3,6 +3,7 @@ const servableFunctions = [
 ];
 
 const slackErrorReportWrapper = async (func, ...args) => {
+  // Not actually reporting to Slack in this demo
   console.log(func);
   try {
     return await func(...args);
