@@ -1,7 +1,5 @@
 const servableFunctions = [
   'shopify/shopifyGetSingle',
-  'shopify/shopifyExample',
-  'exampleFunction',
 ];
 
 const slackErrorReportWrapper = async (func, ...args) => {
