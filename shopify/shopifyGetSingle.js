@@ -1,9 +1,12 @@
-const { respond, credsByKey } = require('../utils');
+const { respond, shopifyRequestSetup } = require('../utils');
 
 const shopifyGetSingle = async (keyObj, message) => {
-  const creds = credsByKey(keyObj);
+
+  const { url, headers } = shopifyRequestSetup(keyObj);
+
   return { 
-    creds,
+    url, 
+    headers,
     response: `Heard ${ message }`,
   };
 };
@@ -19,4 +22,4 @@ module.exports = {
   shopifyGetSingleApi,
 };
 
-// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "platform": "shopify", "key": "example", "subkey": "alternate" }, "message": "Read the sign - no droids allowed." }'
+// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example", "subkey": "alternate" }, "message": "Read the sign - no droids allowed." }'

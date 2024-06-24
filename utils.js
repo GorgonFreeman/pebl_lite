@@ -113,6 +113,24 @@ const credsByKey = ({ platform, key, subkey } = {}) => {
   return creds;
 };
 
+const shopifyRequestSetup = (keyObj) => {
+  // returns { url, headers }
+  const creds = credsByKey({ 
+    ...keyObj, 
+    ...{
+      platform: 'shopify',
+    },
+  });
+  const { STORE_URL, SHOPIFY_API_KEY } = creds;
+  const url = `https://${ STORE_URL }.myshopify.com/admin/api/2024-07/graphql.json`;
+  const headers = {
+    'X-Shopify-Access-Token': SHOPIFY_API_KEY,
+    // This is just a useful default, can override if desired
+    'Content-Type': 'application/json',
+  };
+  return { url, headers }; 
+};
+
 module.exports = {
   respond,
   intsToRangeArray,
@@ -121,4 +139,5 @@ module.exports = {
   askQuestion,
   capitaliseString,
   credsByKey,
+  shopifyRequestSetup,
 };
