@@ -34,8 +34,8 @@ const shopifyGetSingle = async (keyObj, resource, id, { attrs = defaultAttrs } =
 };
 
 const shopifyGetSingleApi = async (req, res) => {
-  const { keyObj, message } = req.body;
-  const result = await shopifyGetSingle(keyObj, message);
+  const { keyObj, resource, id, options } = req.body;
+  const result = await shopifyGetSingle(keyObj, resource, id, options);
   respond(res, 200, result);
 };
 
