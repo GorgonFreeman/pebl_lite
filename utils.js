@@ -274,6 +274,89 @@ const mandateParam = async (res, paramName, paramValue, validator) => {
   return false;
 };
 
+// Mandatory params are passed by themselves, optional params are passed in an object, so you can leave them all off or include just the ones you need.
+const shopifyPaginateGraphql = async (query, nodePath, url, headers, { method = 'post', variables = {}, limit = false, cursor, returnFinalCursor } = {}) => {
+
+  const mandatoryParams = { query, nodePath, url, headers };
+  const missingMandatoryParams = Object.entries(mandatoryParams).filter(([name, param]) => param === undefined);
+  if (missingMandatoryParams.length > 0) {
+    const errMessage = `shopifyPaginateGraphql called with ${ missingMandatoryParams.map(([name, param]) => `'${ name }'`).join(', ') } missing.`;
+    console.error(errMessage);
+    throw new Error(errMessage);
+  }
+
+  // nodePath: Used to be nodeName e.g. products, 
+  //   but to allow pagination within a nested query like collectionByHandle, 
+  //   it now takes a dot-separated path, e.g. collectionByHandle.products.
+  //   For most cases, just the node name will still be fine.
+  const nodeParts = nodePath.split('.');
+  const nodeName = nodeParts.pop();
+
+  if (!query.includes(nodeName)) {
+    const errMessage = `Provided query does not include nodeName '${ nodeName }'`;
+    console.error(errMessage, query, nodeName);
+    throw new Error(errMessage);
+  }
+
+  if (!query.includes('$cursor')) {
+    const errMessage = `Provided query has nowhere to use $cursor`;
+    console.error(errMessage, query);
+    throw new Error(errMessage);
+  }
+
+  const allResults = [];
+
+  let latestResponse;
+  let finalCursor;
+  try {
+    // let cursor; // cursor moved to params to allow starting from a certain point
+    let hasNextPage = true;
+    let limitReached = false;
+
+    while (hasNextPage && !limitReached) {
+
+      const variablesWithCursor = { ...variables, cursor };
+      const responseData = await customAxios(method, url, { query, variables: variablesWithCursor }, { headers });
+      latestResponse = responseData;
+
+      let interrogableObject = responseData?.data;
+
+      if (nodeParts.length > 0) {
+        for (const nodePart of nodeParts) {
+          interrogableObject = interrogableObject?.[nodePart];
+        }
+      }
+
+      let { [nodeName]: items } = interrogableObject;
+      const { pageInfo } = items;
+      items = items?.edges.map(edge => edge.node);
+
+      allResults.push(...items);
+      console.log(allResults.length);
+      
+      ({ hasNextPage, endCursor: cursor } = pageInfo);
+      finalCursor = cursor;
+
+      if (!limit) {
+        continue;
+      }
+      limitReached = allResults.length >= limit;
+    }
+  } catch(err) {
+    console.error(err, latestResponse);
+    throw new Error(err);
+  }
+
+  if (!returnFinalCursor) {
+    return allResults;  
+  }
+
+  return {
+    finalCursor,
+    items: allResults,
+  };
+};
+
 module.exports = {
   respond,
   intsToRangeArray,
@@ -282,8 +365,10 @@ module.exports = {
   askQuestion,
   capitaliseString,
   credsByKey,
-  shopifyRequestSetup,
   customAxios,
   stripEdgesAndNodes,
   mandateParam,
+
+  shopifyRequestSetup,
+  shopifyPaginateGraphql,
 };
