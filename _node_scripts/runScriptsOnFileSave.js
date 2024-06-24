@@ -40,9 +40,15 @@ const runScripts = (path) => {
 
   const moreScriptsToRun = [];
 
+  // console.log('path', path);
+  if (path === '.creds.yml') {
+    moreScriptsToRun.push('node _node_scripts/copyCredsToEnv');
+  }
+
   const command = `conc ${ [ ...scriptsToRun, ...moreScriptsToRun ].map(script => `"${ script }"`).join(' ') }`;
   console.log(command);
   exec(command, (err, stdout, stderr) => {
+    console.error(err);
     if (err) {
       console.error(`Error executing scripts: ${ stderr }`);
     } else {
