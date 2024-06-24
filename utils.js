@@ -2,6 +2,7 @@ require('dotenv').config();
 const jsYaml = require('js-yaml');
 const readline = require('readline');
 const fs = require('fs').promises;
+const axios = require('axios');
 
 const respond = (res, status, data, contentType = 'application/json') => {
   return res.writeHead(status, { 'Content-Type': contentType }).end(contentType === 'application/json' ? JSON.stringify(data) : data);
@@ -131,6 +132,90 @@ const shopifyRequestSetup = (keyObj) => {
   return { url, headers }; 
 };
 
+const customAxios = async (method, ...args) => {
+  const [url, ...rest] = args;
+
+  if (!method) {
+    throw new Error('Called customAxios without a method');
+  }
+
+  // At the end of the day, return response.data or equivalent
+  let responseData;
+
+  const MAX_ATTEMPTS = 10;
+  const WAIT_TIME = 3000;
+  let attempts = 0;
+  let keepTrying = true;
+
+  while (keepTrying) {
+
+    ++attempts;
+    keepTrying = false;
+
+    if (attempts > 1) {
+      console.warn(`Attempt ${ attempts }`);
+    }
+
+    let response;
+    try {
+      response = await axios[method](...args);  
+    } catch(err) {
+      const { response: errResponse, request: errRequest } = err;
+
+      if (errResponse) {
+        // The request was made and the server responded with a status code outside the range of 2xx
+        console.error(errResponse);
+
+        const { status } = errResponse;
+        if (status === 429) {
+          console.warn('Throttled');
+
+          if (attempts >= MAX_ATTEMPTS) {
+            console.error(`customAxios ran out of throttling attempts.`);
+            return { error: err };
+          }
+
+          keepTrying = true;
+          await wait(WAIT_TIME);
+          continue;
+        }
+
+      } else if (errRequest) {
+        // The request was made but no response was received
+        console.error(errRequest);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error(err);
+      }
+
+      return { error: err };
+    }
+    
+    ({ data: responseData } = response);
+
+    // Shopify error handling
+    const { errors } = responseData;
+    if (errors) {
+      if (errors.every(err => err?.message === 'Throttled')) {
+        console.warn('Throttled');
+        // Our response was throttled - nothing else was wrong, so wait and try again.
+        if (attempts >= MAX_ATTEMPTS) {
+          console.error(`customAxios ran out of throttling attempts.`);
+          return { error: errors };
+        }
+
+        keepTrying = true;
+        await wait(WAIT_TIME);
+        continue;
+      }
+
+      return { error: errors };
+    }
+  }
+
+  return responseData;
+};
+
 module.exports = {
   respond,
   intsToRangeArray,
@@ -140,4 +225,5 @@ module.exports = {
   capitaliseString,
   credsByKey,
   shopifyRequestSetup,
+  customAxios,
 };
