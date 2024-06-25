@@ -54,5 +54,5 @@ module.exports = {
   shopifyGetSingleApi,
 };
 
-// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "order", "id": "5947052163144" }'
-// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example", "subkey": "alternate" }, "resource": "order", "id": "5947052163144" }'
+// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "product", "id": "7388321874003", "options": { "attrs": "id title handle variants(first: 5) { edges { node { title } } }" } }'
+// curl localhost:8000/shopifyGetSingle -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example", "subkey": "alternate" }, "resource": "product", "id": "7388321874003" }'
