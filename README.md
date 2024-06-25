@@ -1,6 +1,8 @@
 # pebl
 
-NodeJS middleware starter pack. Framework for making HTTP functions ready to call locally or host online and schedule to run automatically.
+Pebl is a NodeJS middleware starter pack, starting with a complete and working products fetch from a Shopify store.
+
+Each function has an HTTP interface, ready to call locally, or host online and schedule to run automatically.
 
 ## Hi!
 
