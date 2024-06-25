@@ -1,31 +1,28 @@
-const { respond, shopifyRequestSetup, customAxios } = require('../utils');
+const { respond, mandateParam } = require('../utils');
 
-const shopifyVariantGet = async (keyObj, productId, { optionalArg } = {}) => {
+const { shopifyGetSingle } = require('../shopify/shopifyGetSingle');
 
-  const { url, headers } = shopifyRequestSetup(keyObj);
+const defaultAttrs = `
+  id
+  sku
+`;
 
-  const query = `
-    query GetProduct ($id: ID!) {
-      product(id: $id) {
-        ...
-      }
-    }
-  `;
-
-  const variables = {
-    id: `gid://shopify/Product/${ productId }`,
-  };
-
-  const result = await customAxios('post', url, { query, variables }, { headers });
-
-  console.log(result);
-
-  return result;
+const shopifyVariantGet = async (keyObj, variantId, { attrs = defaultAttrs, ...options } = {}) => {
+  return await shopifyGetSingle(keyObj, 'productVariant', variantId, { attrs, ...options });
 };
 
 const shopifyVariantGetApi = async (req, res) => {
-  const { keyObj, productId, options } = req.body;
-  const result = await shopifyVariantGet(keyObj, productId, options);
+  const { keyObj, variantId, options } = req.body;
+
+  const paramsValid = await Promise.all([
+    mandateParam(res, 'keyObj', keyObj),
+    mandateParam(res, 'variantId', variantId),
+  ]);
+  if (paramsValid.some(valid => valid === false)) {
+    return;
+  }
+
+  const result = await shopifyVariantGet(keyObj, variantId, options);
   respond(res, 200, result);
 };
 
@@ -34,4 +31,4 @@ module.exports = {
   shopifyVariantGetApi,
 };
 
-// curl localhost:8000/shopifyVariantGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "productId": "123" }'
+// curl localhost:8000/shopifyVariantGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "variantId": "41969051861075" }'
