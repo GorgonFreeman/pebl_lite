@@ -2,6 +2,10 @@
 
 NodeJS middleware starter pack. Framework for making HTTP functions ready to call locally or host online and schedule to run automatically.
 
+## Hi!
+
+I'm John! If you're here from Shopify Editions.Dev, welcome to the repo, I hope you find it useful! Feel free to watch or star so I know if I touched any souls today c:
+
 ## Intro
 
 Each directory is a platform. 
