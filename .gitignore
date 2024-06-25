@@ -1,3 +1,4 @@
 node_modules
 /.env
 /.creds.yml
+.DS_Store
