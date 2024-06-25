@@ -71,5 +71,5 @@ module.exports = {
   shopifyGetApi,
 };
 
-// curl localhost:8000/shopifyGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "customer" }'
-// curl localhost:8000/shopifyGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "customer", "options": { "limit": 500, "attrs": "id, firstName, email, lastName" } }'
+// curl localhost:8000/shopifyGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "product" }'
+// curl localhost:8000/shopifyGet -H "Content-Type: application/json" -d '{ "keyObj": { "key": "example" }, "resource": "product", "options": { "limit": 500, "attrs": "id, title, tags" } }'
