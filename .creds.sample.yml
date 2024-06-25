@@ -1,6 +1,6 @@
 shopify:
   example:
-    STORE_URL: pebl-sandbox
-    SHOPIFY_API_KEY: shpat_111111111111
+    STORE_URL: pebl-lite-sandbox
+    SHOPIFY_API_KEY: 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
     alternate:
-      SHOPIFY_API_KEY: shpat_22222222222
+      SHOPIFY_API_KEY: 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
