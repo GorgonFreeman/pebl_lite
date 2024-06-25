@@ -216,6 +216,10 @@ const customAxios = async (method, ...args) => {
   return responseData;
 };
 
+const isObject = input => {
+  return typeof input === 'object' && input !== null && !Array.isArray(input);
+};
+
 const stripEdgesAndNodes = input => {
 
   // console.log(input);
@@ -245,7 +249,7 @@ const stripEdgesAndNodes = input => {
   if (Array.isArray(input)) {
 
     // console.log('input is array');
-    return input.map(item => recursivelyTransform(item));
+    return input.map(item => stripEdgesAndNodes(item));
 
   } else if (isObject(input)) {
     // console.log('input is object');
@@ -253,7 +257,7 @@ const stripEdgesAndNodes = input => {
     input = transformObject(input);
 
     for (let [k,v] of Object.entries(input)) {
-      input[k] = recursivelyTransform(v);
+      input[k] = stripEdgesAndNodes(v);
     }
     return input;
   }
